@@ -5,17 +5,16 @@ function handleForm(){
     const address = document.getElementById("address").value;
     const phone = document.getElementById("phone_number").value;
 
-    const id = 'user_'+ Date.now();
-
     const details = {
-        id,
         name,
         address,
         phone
     }
 
-    saveDetails(details);
-    add();
+    saveDetails(details)
+    .then(() => {
+        add(); 
+    });
 }
 
 function saveDetails(details){
@@ -43,7 +42,7 @@ function add() {
             if (response.data) {
                 response.data.forEach(data => {
                     const li = document.createElement('li');
-                    li.id = `${data.id}`;
+                    li.id = `${data._id}`;
 
                     const deleteButton = document.createElement("button");
                     deleteButton.type = "button";
@@ -59,8 +58,7 @@ function add() {
                         editPatientDetails(data._id);
                     });
 
-                
-                    li.textContent = `${data.id} - ${data.Name} - ${data.Address} - ${data.Phone}`;
+                    li.textContent = `${data._id} - ${data.name} - ${data.address} - ${data.phone}`;
                     li.appendChild(deleteButton);
                     li.appendChild(editButton);
                     ul.appendChild(li);
@@ -71,16 +69,23 @@ function add() {
             console.log(error);
         });
 }
-function deletePatientDetails(id){
-    axios.delete('https://crudcrud.com/api/b61eac7b9fb1493cb99c4c315c9cfe57/appointmenetData')
-    .then((responce)=>{
-        console.log(responce.data);
-        responce = responce.filter(data => data._id !== _id);
-        add();
-    })
-    .catch((err)=>{
-        console.log(err);
-    })
+
+function deletePatientDetails(_id) {
+    axios.delete(`https://crudcrud.com/api/b61eac7b9fb1493cb99c4c315c9cfe57/appointmenetData/${_id}`)
+        .then((response) => {
+            console.log(response.data);
+            add();
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+}
+
+function editPatientDetails(_id) {
+    // Implement your edit logic here
+    console.log(`Edit patient with ID: ${_id}`);
 }
 
 window.onload = add;
+
+
